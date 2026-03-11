@@ -254,15 +254,15 @@ module tb_gold_mesh;
             hopY = encode_hops((dy < 0) ? -dy : dy);
 
             make_pkt = {
-                1'b0,        // [63]    VC=0 (even; ignored by router)
-                dirX,        // [62]    direction X
-                dirY,        // [61]    direction Y
-                5'b00000,    // [60:56] reserved
-                hopX,        // [55:52] X hops remaining
-                hopY,        // [51:48] Y hops remaining
-                8'd0 + src_x,// [47:40] source X
-                8'd0 + src_y,// [39:32] source Y
-                payload      // [31:0]  payload
+                1'b0,           // [63]    VC=0 (even; ignored by router)
+                dirX,           // [62]    direction X
+                dirY,           // [61]    direction Y
+                5'b00000,       // [60:56] reserved
+                hopX,           // [55:52] X hops remaining
+                hopY,           // [51:48] Y hops remaining
+                src_x[7:0],     // [47:40] source X  (integer->8-bit, no promotion)
+                src_y[7:0],     // [39:32] source Y  (integer->8-bit, no promotion)
+                payload         // [31:0]  payload
             };
         end
     endfunction
@@ -690,14 +690,19 @@ module tb_gold_mesh;
                 pass_count = pass_count + 1;
             end
 
-            // Duplicate detection
-            if (seen[dst_id][src_id] === 1) begin
-                $display("  FAIL [Phase %0d] DUPLICATE pkt at(%0d,%0d) from(%0d,%0d)!",
+            // Source tracking: mark this (dst,src) pair as seen
+            // For TC14 completeness check (each source should appear exactly once).
+            // For TC10/TC13 same src->dst retransmit: seen[][] already=1, that's OK.
+            seen[dst_id][src_id] = 1;
 
-                         current_phase, dst_x, dst_y, sx, sy);
+            // Duplicate detection: only flag if we received MORE packets than expected.
+            // This allows TC10 (3 pkts same src->dst) and TC13 round-2 reuse
+            // without false DUPLICATE failures, while still catching true over-delivery.
+            if (pkt_received[dst_id] > pkt_expected[dst_id]) begin
+                $display("  FAIL [Phase %0d] OVERCOUNT at(%0d,%0d): got %0d expected %0d from(%0d,%0d)",
+                         current_phase, dst_x, dst_y,
+                         pkt_received[dst_id], pkt_expected[dst_id], sx, sy);
                 fail_count = fail_count + 1;
-            end else begin
-                seen[dst_id][src_id] = 1;
             end
 
             // Log to gather result file
@@ -941,6 +946,7 @@ module tb_gold_mesh;
         // =========================================================
         $display("\n=== TC2: Single Hop East  node00->node10 ===");
         inject_pkt(0, 0, 1, 0, 32'h00_00_00_02);
+
         wait_pkt(1, 0, rx);
         $display("  Received: %h", rx);
         check_pkt(rx, 0, 0, 32'h00_00_00_02, 2);

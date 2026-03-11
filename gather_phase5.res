@@ -1,1 +1,24 @@
 // Cardinal Mesh Gather Results -- Dest node(1,1) id=5
+phase=13 time=702000 dst=(1,1)[5] src=(0,1)[4] pkt=00000001ee000001
+phase=13 time=710000 dst=(1,1)[5] src=(2,1)[6] pkt=40000201ee000201
+phase=13 time=718000 dst=(1,1)[5] src=(1,0)[1] pkt=20000100ee000100
+phase=13 time=726000 dst=(1,1)[5] src=(1,2)[9] pkt=00000102ee000102
+phase=13 time=750000 dst=(1,1)[5] src=(0,1)[4] pkt=00000001ee000011
+phase=13 time=758000 dst=(1,1)[5] src=(2,1)[6] pkt=40000201ee000211
+phase=13 time=766000 dst=(1,1)[5] src=(1,0)[1] pkt=20000100ee000110
+phase=13 time=774000 dst=(1,1)[5] src=(1,2)[9] pkt=00000102ee000112
+phase=5 time=1854000 dst=(1,1)[5] src=(0,0)[0] pkt=2000000000000000
+phase=5 time=1862000 dst=(1,1)[5] src=(1,0)[1] pkt=2000010000000001
+phase=5 time=1870000 dst=(1,1)[5] src=(2,0)[2] pkt=6000020000000002
+phase=5 time=1878000 dst=(1,1)[5] src=(0,1)[4] pkt=0000000100000004
+phase=5 time=1886000 dst=(1,1)[5] src=(3,0)[3] pkt=6000030000000003
+phase=5 time=1894000 dst=(1,1)[5] src=(2,1)[6] pkt=4000020100000006
+phase=5 time=1902000 dst=(1,1)[5] src=(3,1)[7] pkt=4000030100000007
+phase=5 time=1910000 dst=(1,1)[5] src=(1,2)[9] pkt=0000010200000009
+phase=5 time=1918000 dst=(1,1)[5] src=(0,2)[8] pkt=0000000200000008
+phase=5 time=1926000 dst=(1,1)[5] src=(2,2)[10] pkt=400002020000000a
+phase=5 time=1942000 dst=(1,1)[5] src=(3,2)[11] pkt=400003020000000b
+phase=5 time=1950000 dst=(1,1)[5] src=(1,3)[13] pkt=000001030000000d
+phase=5 time=1958000 dst=(1,1)[5] src=(0,3)[12] pkt=000000030000000c
+phase=5 time=1966000 dst=(1,1)[5] src=(2,3)[14] pkt=400002030000000e
+phase=5 time=1982000 dst=(1,1)[5] src=(3,3)[15] pkt=400003030000000f
