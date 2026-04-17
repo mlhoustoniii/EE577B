@@ -1,0 +1,75 @@
+Information: Updating design information... (UID-85)
+Warning: Design 'gold_router_xystd' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : gold_router_xystd
+Version: K-2015.06-SP5-5
+Date   : Thu Mar 12 01:48:24 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+  Startpoint: polarity_reg_reg
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: oc_pe/odd_out_buf/do_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  polarity_reg_reg/CLK (DFFPOSX1)                         0.00 #     0.00 r
+  polarity_reg_reg/Q (DFFPOSX1)                           0.81       0.81 r
+  oc_pe/polarity (output_ctrl_xystd_1)                    0.00       0.81 r
+  oc_pe/U916/Y (INVX1)                                    0.67       1.47 f
+  oc_pe/U915/Y (INVX1)                                    0.44       1.92 r
+  oc_pe/arb/polarity (rr_arbiter_1)                       0.00       1.92 r
+  oc_pe/arb/U71/Y (INVX1)                                 0.14       2.06 f
+  oc_pe/arb/U56/Y (AOI21X1)                               0.06       2.12 r
+  oc_pe/arb/U64/Y (BUFX2)                                 0.05       2.16 r
+  oc_pe/arb/U81/Y (INVX1)                                 0.03       2.20 f
+  oc_pe/arb/U48/Y (OAI21X1)                               0.03       2.23 r
+  oc_pe/arb/U47/Y (AOI22X1)                               0.04       2.27 f
+  oc_pe/arb/U27/Y (BUFX2)                                 0.04       2.30 f
+  oc_pe/arb/U46/Y (OAI21X1)                               0.04       2.35 r
+  oc_pe/arb/U22/Y (AND2X1)                                0.08       2.43 r
+  oc_pe/arb/grant[1] (rr_arbiter_1)                       0.00       2.43 r
+  oc_pe/U681/Y (AND2X1)                                   0.04       2.47 r
+  oc_pe/U682/Y (INVX1)                                    0.02       2.49 f
+  oc_pe/U673/Y (AND2X1)                                   0.04       2.53 f
+  oc_pe/U674/Y (INVX1)                                    0.00       2.53 r
+  oc_pe/U165/Y (OAI21X1)                                  0.02       2.55 f
+  oc_pe/U914/Y (INVX1)                                    0.00       2.55 r
+  oc_pe/odd_out_buf/write_en (vc_buffer_1)                0.00       2.55 r
+  oc_pe/odd_out_buf/U7/Y (INVX1)                          0.01       2.56 f
+  oc_pe/odd_out_buf/U3/Y (OR2X1)                          0.04       2.60 f
+  oc_pe/odd_out_buf/U5/Y (INVX1)                          0.58       3.18 r
+  oc_pe/odd_out_buf/U4/Y (OR2X1)                          0.01       3.19 r
+  oc_pe/odd_out_buf/U6/Y (INVX1)                          0.39       3.58 f
+  oc_pe/odd_out_buf/U97/Y (AOI22X1)                       0.17       3.75 r
+  oc_pe/odd_out_buf/U8/Y (INVX1)                          0.04       3.79 f
+  oc_pe/odd_out_buf/do_reg[0]/D (DFFPOSX1)                0.00       3.79 f
+  data arrival time                                                  3.79
+
+  clock clk (rise edge)                                   4.00       4.00
+  clock network delay (ideal)                             0.00       4.00
+  oc_pe/odd_out_buf/do_reg[0]/CLK (DFFPOSX1)              0.00       4.00 r
+  library setup time                                     -0.06       3.94
+  data required time                                                 3.94
+  --------------------------------------------------------------------------
+  data required time                                                 3.94
+  data arrival time                                                 -3.79
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.15
+
+
+1

@@ -1,0 +1,80 @@
+Information: Updating design information... (UID-85)
+Warning: Design 'gold_router_torus' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : gold_router_torus
+Version: K-2015.06-SP5-5
+Date   : Thu Mar 12 02:25:23 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+  Startpoint: polarity_reg_reg
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: oc_west/odd_out_buf/do_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  polarity_reg_reg/CLK (DFFPOSX1)                         0.00 #     0.00 r
+  polarity_reg_reg/Q (DFFPOSX1)                           0.81       0.81 r
+  oc_west/polarity (output_ctrl_torus_2)                  0.00       0.81 r
+  oc_west/U914/Y (INVX1)                                  0.22       1.02 f
+  oc_west/U913/Y (INVX1)                                  0.85       1.87 r
+  oc_west/U576/Y (AOI22X1)                                0.16       2.03 f
+  oc_west/U915/Y (INVX1)                                  0.15       2.18 r
+  oc_west/arb/request[0] (rr_arbiter_2)                   0.00       2.18 r
+  oc_west/arb/U73/Y (INVX1)                               0.06       2.24 f
+  oc_west/arb/U68/Y (AND2X1)                              0.05       2.29 f
+  oc_west/arb/U69/Y (INVX1)                               0.03       2.31 r
+  oc_west/arb/U57/Y (OAI21X1)                             0.02       2.34 f
+  oc_west/arb/U80/Y (INVX1)                               0.03       2.37 r
+  oc_west/arb/U55/Y (NAND3X1)                             0.02       2.39 f
+  oc_west/arb/U36/Y (BUFX2)                               0.04       2.42 f
+  oc_west/arb/U74/Y (INVX1)                               0.00       2.42 r
+  oc_west/arb/U37/Y (NAND3X1)                             0.01       2.43 f
+  oc_west/arb/U67/Y (BUFX2)                               0.03       2.46 f
+  oc_west/arb/U5/Y (AND2X1)                               0.05       2.52 f
+  oc_west/arb/U65/Y (INVX1)                               0.04       2.56 r
+  oc_west/arb/grant[3] (rr_arbiter_2)                     0.00       2.56 r
+  oc_west/U685/Y (AND2X1)                                 0.05       2.60 r
+  oc_west/U686/Y (INVX1)                                  0.03       2.64 f
+  oc_west/U667/Y (AND2X1)                                 0.04       2.68 f
+  oc_west/U668/Y (INVX1)                                  0.00       2.68 r
+  oc_west/U165/Y (OAI21X1)                                0.02       2.70 f
+  oc_west/U912/Y (INVX1)                                  0.00       2.70 r
+  oc_west/odd_out_buf/write_en (vc_buffer_3)              0.00       2.70 r
+  oc_west/odd_out_buf/U7/Y (INVX1)                        0.01       2.71 f
+  oc_west/odd_out_buf/U3/Y (OR2X1)                        0.04       2.75 f
+  oc_west/odd_out_buf/U5/Y (INVX1)                        0.58       3.32 r
+  oc_west/odd_out_buf/U4/Y (OR2X1)                        0.01       3.34 r
+  oc_west/odd_out_buf/U6/Y (INVX1)                        0.39       3.73 f
+  oc_west/odd_out_buf/U97/Y (AOI22X1)                     0.17       3.90 r
+  oc_west/odd_out_buf/U12/Y (INVX1)                       0.04       3.94 f
+  oc_west/odd_out_buf/do_reg[0]/D (DFFPOSX1)              0.00       3.94 f
+  data arrival time                                                  3.94
+
+  clock clk (rise edge)                                   4.00       4.00
+  clock network delay (ideal)                             0.00       4.00
+  oc_west/odd_out_buf/do_reg[0]/CLK (DFFPOSX1)            0.00       4.00 r
+  library setup time                                     -0.06       3.94
+  data required time                                                 3.94
+  --------------------------------------------------------------------------
+  data required time                                                 3.94
+  data arrival time                                                 -3.94
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.01
+
+
+1
