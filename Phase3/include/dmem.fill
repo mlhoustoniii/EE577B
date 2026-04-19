@@ -1,9 +1,0 @@
-0102030405060708 // dmem[0]: sequential bytes 01-08 (primary test pattern)
-0807060504030201 // dmem[1]: reversed byte order (secondary pattern)
-0303030303030303 // dmem[2]: shift amount = 3 in all subfields
-0000001000000010 // dmem[3]: 32-bit values for div/mul tests
-0000000000000064 // dmem[4]: 100 decimal (dividend)
-0000000000000007 // dmem[5]: 7 decimal (divisor)
-0000000000000019 // dmem[6]: 25 decimal (sqrt input -> result = 5)
-0000000000000000 // dmem[7]: zero value (for branch testing)
-FF80FE00FD00FC00 // dmem[8]: negative values for VSRA sign-extension test

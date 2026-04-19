@@ -1,0 +1,110 @@
+****************************************
+Report : timing
+	-path_type full
+	-delay_type min
+	-slack_lesser_than 0.00
+	-max_paths 5
+	-sort_by slack
+Design : cardinal_node
+Version: Y-2026.03
+Date   : Fri Apr 17 21:54:05 2026
+****************************************
+
+
+  Startpoint: u_cpu/ifid_inst_reg_21_
+               (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: u_cpu/IF_unit/PC_reg_10_
+               (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: min
+
+  Point                                                   Incr       Path
+  ------------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.50       0.50
+  u_cpu/ifid_inst_reg_21_/CLK (DFFPOSX1)                  0.00       0.50 r
+  u_cpu/ifid_inst_reg_21_/Q (DFFPOSX1)                    0.07       0.57 r
+  u_cpu/IF_unit/U118/Y (NAND2X1)                          0.01       0.58 f
+  u_cpu/IF_unit/U119/Y (NAND2X1)                          0.01       0.59 r
+  u_cpu/IF_unit/PC_reg_10_/D (DFFPOSX1)                   0.00       0.59 r
+  data arrival time                                                  0.59
+
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.50       0.50
+  u_cpu/IF_unit/PC_reg_10_/CLK (DFFPOSX1)                            0.50 r
+  clock reconvergence pessimism                           0.00       0.50
+  clock uncertainty                                       0.10       0.60
+  library hold time                                      -0.01       0.59
+  data required time                                                 0.59
+  ------------------------------------------------------------------------------
+  data required time                                                 0.59
+  data arrival time                                                 -0.59
+  ------------------------------------------------------------------------------
+  slack (VIOLATED: increase significant digits)                     -0.00
+
+
+  Startpoint: u_cpu/ifid_inst_reg_22_
+               (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: u_cpu/IF_unit/PC_reg_9_
+               (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: min
+
+  Point                                                   Incr       Path
+  ------------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.50       0.50
+  u_cpu/ifid_inst_reg_22_/CLK (DFFPOSX1)                  0.00       0.50 r
+  u_cpu/ifid_inst_reg_22_/Q (DFFPOSX1)                    0.07       0.57 r
+  u_cpu/IF_unit/U42/Y (NAND2X1)                           0.01       0.58 f
+  u_cpu/IF_unit/U43/Y (NAND2X1)                           0.01       0.59 r
+  u_cpu/IF_unit/PC_reg_9_/D (DFFPOSX1)                    0.00       0.59 r
+  data arrival time                                                  0.59
+
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.50       0.50
+  u_cpu/IF_unit/PC_reg_9_/CLK (DFFPOSX1)                             0.50 r
+  clock reconvergence pessimism                           0.00       0.50
+  clock uncertainty                                       0.10       0.60
+  library hold time                                      -0.01       0.59
+  data required time                                                 0.59
+  ------------------------------------------------------------------------------
+  data required time                                                 0.59
+  data arrival time                                                 -0.59
+  ------------------------------------------------------------------------------
+  slack (VIOLATED: increase significant digits)                     -0.00
+
+
+  Startpoint: u_nic/net_output_buf_reg_10_
+               (rising edge-triggered flip-flop clocked by CLK)
+  Endpoint: u_nic/net_output_buf_reg_10_
+               (rising edge-triggered flip-flop clocked by CLK)
+  Path Group: CLK
+  Path Type: min
+
+  Point                                                   Incr       Path
+  ------------------------------------------------------------------------------
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.50       0.50
+  u_nic/net_output_buf_reg_10_/CLK (DFFPOSX1)             0.00       0.50 r
+  u_nic/net_output_buf_reg_10_/Q (DFFPOSX1)               0.06       0.56 r
+  u_nic/U420/Y (AOI22X1)                                  0.02       0.58 f
+  u_nic/U601/Y (INVX1)                                   -0.00       0.58 r
+  u_nic/net_output_buf_reg_10_/D (DFFPOSX1)               0.00       0.58 r
+  data arrival time                                                  0.58
+
+  clock CLK (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.50       0.50
+  u_nic/net_output_buf_reg_10_/CLK (DFFPOSX1)                        0.50 r
+  clock reconvergence pessimism                           0.00       0.50
+  clock uncertainty                                       0.10       0.60
+  library hold time                                      -0.02       0.58
+  data required time                                                 0.58
+  ------------------------------------------------------------------------------
+  data required time                                                 0.58
+  data arrival time                                                 -0.58
+  ------------------------------------------------------------------------------
+  slack (VIOLATED: increase significant digits)                     -0.00
+
+
+1

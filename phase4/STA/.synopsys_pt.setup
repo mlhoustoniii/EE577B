@@ -1,0 +1,5 @@
+# PrimeTime session setup for cardinal_router STA
+# EE 577B Spring 2026, Phase 4
+set search_path  [list . ./libs ./designs ./sdc /tools/PDK/NCSU45PDK/FreePDK45/osu_soc/lib/files]
+set link_path    [list * gscl45nm.db]
+set target_library "gscl45nm.db"

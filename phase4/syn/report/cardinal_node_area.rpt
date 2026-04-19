@@ -1,0 +1,48 @@
+ 
+****************************************
+Report : area
+Design : cardinal_node
+Version: Y-2026.03
+Date   : Fri Apr 17 19:07:41 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: /tools/PDK/NCSU45PDK/FreePDK45/osu_soc/lib/files/gscl45nm.db)
+
+Number of ports:                         1409
+Number of nets:                        273716
+Number of cells:                       263236
+Number of combinational cells:         260853
+Number of sequential cells:              2378
+Number of macros/black boxes:               0
+Number of buf/inv:                      75746
+Number of references:                       9
+
+Combinational area:             659130.904006
+Buf/Inv area:                   118717.880151
+Noncombinational area:           18955.965179
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                678086.869185
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area              Local cell area
+                                  --------------------  ------------------------------- 
+Hierarchical cell                 Absolute     Percent  Combi-       Noncombi-   Black-
+                                  Total        Total    national     national    boxes   Design
+--------------------------------  -----------  -------  -----------  ----------  ------  -----------------
+cardinal_node                     678086.8692    100.0     174.1103      0.0000  0.0000  cardinal_node
+u_cpu                             676176.8182     99.7   24382.0119  17854.9874  0.0000  cardinal_cpu
+u_cpu/EX_MEM_unit                 633474.2733     93.4  633474.2733      0.0000  0.0000  ex_mem_stage
+u_cpu/ID_unit                        215.8780      0.0     215.8780      0.0000  0.0000  id_stage
+u_cpu/IF_unit                        249.6676      0.0     185.8428     63.8248  0.0000  instruction_fetch
+u_nic                               1735.9407      0.3     698.7877   1037.1530  0.0000  cardinal_nic
+--------------------------------  -----------  -------  -----------  ----------  ------  -----------------
+Total                                                   659130.9040  18955.9652  0.0000
+
+1

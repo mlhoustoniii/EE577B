@@ -1,0 +1,107 @@
+/* =========================================================
+   imem_bb.lib  --  Liberty blackbox timing model for imem
+   EE 577B Spring 2026, Phase 4
+
+   Purpose: Give DC a real timing arc for the imem blackbox.
+   Without this, DC sees imem's dataOut as a blackbox output
+   with no timing startpoint and prunes all logic that feeds
+   memAddr (the entire instruction fetch path).
+
+   Model:
+     - memAddr is a setup-check input (data arrives before clk)
+     - dataOut  is a combinational output (async ROM read)
+     Since imem has no clock pin, we model dataOut as purely
+     combinational from memAddr with a conservative 1ns delay.
+     This gives DC a real data arc to time against.
+   ========================================================= */
+
+library (imem_bb) {
+    technology (cmos);
+    delay_model : table_lookup;
+    time_unit : "1ns";
+    voltage_unit : "1V";
+    current_unit : "1mA";
+    leakage_power_unit : "1nW";
+    pulling_resistance_unit : "1kohm";
+    capacitive_load_unit (1, pf);
+
+    default_fanout_load      : 1.0;
+    default_inout_pin_cap    : 1.0;
+    default_input_pin_cap    : 1.0;
+    default_output_pin_cap   : 0.0;
+    default_cell_leakage_power : 0.0;
+
+    /* Simple 1-entry LUT for combinational delay */
+    lu_table_template (comb_delay) {
+        variable_1 : input_net_transition;
+        index_1 ("0.5");
+    }
+
+    cell (imem) {
+        area : 500.0;   /* placeholder -- imem is not placed */
+        dont_touch : true;
+        dont_use   : true;
+
+        pin (memAddr[7]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[6]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[5]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[4]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[3]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[2]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[1]) { direction : input;  capacitance : 0.01; }
+        pin (memAddr[0]) { direction : input;  capacitance : 0.01; }
+
+        /* dataOut is combinational from memAddr -- async ROM */
+        pin (dataOut[31]) {
+            direction : output;
+            function : "memAddr[0]";   /* non-constant so DC keeps fanin */
+            timing () {
+                related_pin : "memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]";
+                timing_type : combinational;
+                cell_rise (comb_delay) { values ("1.0"); }
+                cell_fall (comb_delay) { values ("1.0"); }
+                rise_transition (comb_delay) { values ("0.1"); }
+                fall_transition (comb_delay) { values ("0.1"); }
+            }
+        }
+        pin (dataOut[30]) { direction:output; function:"memAddr[1]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[29]) { direction:output; function:"memAddr[2]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[28]) { direction:output; function:"memAddr[3]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[27]) { direction:output; function:"memAddr[4]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[26]) { direction:output; function:"memAddr[5]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[25]) { direction:output; function:"memAddr[6]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[24]) { direction:output; function:"memAddr[7]";
+            timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        /* Remaining dataOut bits -- function of memAddr[0] */
+        pin (dataOut[23]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[22]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[21]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[20]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[19]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[18]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memHead[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[17]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[16]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[15]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[14]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[13]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[12]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[11]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[10]) { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[9])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[8])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[7])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[6])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[5])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[4])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[3])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[2])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[1])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+        pin (dataOut[0])  { direction:output; function:"memAddr[0]"; timing(){related_pin:"memAddr[0] memAddr[1] memAddr[2] memAddr[3] memAddr[4] memAddr[5] memAddr[6] memAddr[7]"; timing_type:combinational; cell_rise(comb_delay){values("1.0");} cell_fall(comb_delay){values("1.0");} rise_transition(comb_delay){values("0.1");} fall_transition(comb_delay){values("0.1");}}}
+    }
+}

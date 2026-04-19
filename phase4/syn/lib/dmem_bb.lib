@@ -1,0 +1,218 @@
+/* =========================================================
+   dmem_bb.lib  --  Liberty blackbox timing model for dmem
+   EE 577B Spring 2026, Phase 4
+
+   Purpose: Give DC real setup-check timing arcs on every
+   dmem input so the entire CPU→DMEM write path is preserved,
+   and a real clock-to-Q arc on dataOut so the DMEM→CPU
+   read path is preserved.
+
+   Model:
+     - All data inputs (dataIn, memAddr, memEn, memWrEn)
+       have setup time relative to clk posedge
+     - dataOut has clock-to-Q delay from clk (registered read)
+       matching the Phase-3 dmem behavior (1-cycle registered)
+   ========================================================= */
+
+library (dmem_bb) {
+    technology (cmos);
+    delay_model : table_lookup;
+    time_unit : "1ns";
+    voltage_unit : "1V";
+    current_unit : "1mA";
+    leakage_power_unit : "1nW";
+    pulling_resistance_unit : "1kohm";
+    capacitive_load_unit (1, pf);
+
+    default_fanout_load      : 1.0;
+    default_inout_pin_cap    : 1.0;
+    default_input_pin_cap    : 1.0;
+    default_output_pin_cap   : 0.0;
+    default_cell_leakage_power : 0.0;
+
+    lu_table_template (setup_tmpl) {
+        variable_1 : constrained_pin_transition;
+        index_1 ("0.5");
+    }
+    lu_table_template (clkq_tmpl) {
+        variable_1 : input_net_transition;
+        index_1 ("0.5");
+    }
+
+    cell (dmem) {
+        area : 1000.0;
+        dont_touch : true;
+        dont_use   : true;
+
+        /* Clock pin */
+        pin (clk) {
+            direction : input;
+            capacitance : 0.01;
+            clock : true;
+        }
+
+        /* Control inputs -- setup check against clk */
+        pin (memEn) {
+            direction : input;
+            capacitance : 0.01;
+            timing () {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint (setup_tmpl) { values ("0.094"); }
+                fall_constraint (setup_tmpl) { values ("0.094"); }
+            }
+        }
+        pin (memWrEn) {
+            direction : input;
+            capacitance : 0.01;
+            timing () {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint (setup_tmpl) { values ("0.094"); }
+                fall_constraint (setup_tmpl) { values ("0.094"); }
+            }
+        }
+
+        /* Address inputs -- setup check against clk */
+        pin (memAddr[7]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[6]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[5]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[4]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[3]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[2]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[1]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (memAddr[0]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+
+        /* Data inputs -- setup check against clk */
+        pin (dataIn[63]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[62]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[61]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[60]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[59]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[58]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[57]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[56]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[55]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[54]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[53]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[52]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[51]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[50]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[49]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[48]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[47]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[46]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[45]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[44]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[43]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[42]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[41]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[40]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[39]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[38]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[37]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[36]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[35]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[34]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[33]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[32]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[31]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[30]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[29]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[28]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[27]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[26]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[25]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[24]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[23]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[22]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[21]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[20]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[19]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[18]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[17]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[16]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[15]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[14]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[13]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[12]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[11]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[10]) { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[9])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[8])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[7])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[6])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[5])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[4])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[3])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[2])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[1])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+        pin (dataIn[0])  { direction:input; capacitance:0.01; timing(){related_pin:"clk"; timing_type:setup_rising; rise_constraint(setup_tmpl){values("0.094");} fall_constraint(setup_tmpl){values("0.094");}}}
+
+        /* dataOut -- registered output, clock-to-Q arc from clk */
+        pin (dataOut[63]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[62]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[61]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[60]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[59]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[58]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[57]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[56]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[55]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[54]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[53]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[52]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[51]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[50]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[49]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[48]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[47]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[46]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[45]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[44]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[43]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[42]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[41]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[40]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[39]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[38]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[37]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[36]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[35]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[34]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[33]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[32]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[31]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[30]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[29]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[28]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[27]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[26]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[25]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[24]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[23]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[22]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[21]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[20]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[19]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[18]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[17]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[16]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[15]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[14]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[13]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[12]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[11]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[10]) { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[9])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[8])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[7])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[6])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[5])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[4])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[3])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[2])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[1])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+        pin (dataOut[0])  { direction:output; timing(){related_pin:"clk"; timing_type:rising_edge; cell_rise(clkq_tmpl){values("0.22");} cell_fall(clkq_tmpl){values("0.20");} rise_transition(clkq_tmpl){values("0.1");} fall_transition(clkq_tmpl){values("0.1");}}}
+    }
+}

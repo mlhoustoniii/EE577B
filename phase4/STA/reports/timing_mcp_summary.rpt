@@ -1,0 +1,18 @@
+****************************************
+Report : timing
+	-path_type summary
+	-delay_type max
+	-max_paths 1
+	-sort_by slack
+Design : cardinal_node
+Version: Y-2026.03
+Date   : Fri Apr 17 21:54:05 2026
+****************************************
+
+Startpoint                      Endpoint                           Slack
+------------------------------------------------------------------------------
+u_cpu/ifid_inst_reg_1_/CLK (DFFPOSX1)
+                                u_cpu/IF_unit/PC_reg_17_/D (DFFPOSX1)
+                                                                    1.86
+
+1

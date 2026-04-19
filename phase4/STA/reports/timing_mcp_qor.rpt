@@ -1,0 +1,51 @@
+****************************************
+Report : qor
+Design : cardinal_node
+Version: Y-2026.03
+Date   : Fri Apr 17 21:54:05 2026
+****************************************
+
+  Timing Path Group 'CLK' (max_delay/setup)
+  ---------------------------------------------
+  Levels of Logic:                           51
+  Critical Path Length:                    2.48
+  Critical Path Slack:                     1.86
+  Total Negative Slack:                    0.00
+  No. of Violating Paths:                     0
+  ---------------------------------------------
+
+  Timing Path Group 'CLK' (min_delay/hold)
+  ---------------------------------------------
+  Levels of Logic:                            3
+  Critical Path Length:                    0.59
+  Critical Path Slack:                    -0.00
+  Total Negative Slack:                   -0.00
+  No. of Violating Paths:                     3
+  ---------------------------------------------
+
+  Area
+  ---------------------------------------------
+  Net Interconnect area:                   0.00
+  Total cell area:                    518663.33
+  Design Area:                        518663.33
+  ---------------------------------------------
+
+
+  Cell & Pin Count
+  ---------------------------------------------
+  Pin Count:                             458254
+  Hierarchical Cell Count:                  303
+  Hierarchical Port Count:                27274
+  Leaf Cell Count:                       142139
+  ---------------------------------------------
+
+
+  Design Rule Violations
+  ---------------------------------------------
+  Total No. of Pins in Design:           458254
+  max_capacitance Count:                  16118
+  max_capacitance Cost:                   51.05
+  Total DRC Cost:                         51.05
+  ---------------------------------------------
+
+1

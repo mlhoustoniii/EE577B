@@ -1,0 +1,46 @@
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+Warning: Design has unannotated black box outputs. (PWR-428)
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : cardinal_node
+Version: Y-2026.03
+Date   : Fri Apr 17 19:08:22 2026
+****************************************
+
+
+Library(s) Used:
+
+    gscl45nm (File: /tools/PDK/NCSU45PDK/FreePDK45/osu_soc/lib/files/gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 1.1  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+cardinal_node                             0.464    8.843 2.25e+06   11.560 100.0
+  u_cpu (cardinal_cpu)                    0.454    8.358 2.24e+06   11.055  95.6
+    EX_MEM_unit (ex_mem_stage)            0.303    0.417 2.06e+06    2.783  24.1
+    ID_unit (id_stage)                 2.27e-03 1.91e-03  616.137 4.80e-03   0.0
+    IF_unit (instruction_fetch)        5.78e-03 3.64e-02 1.04e+03 4.33e-02   0.4
+  u_nic (cardinal_nic)                 1.24e-02    0.471 8.42e+03    0.492   4.3
+  u_imem (imem)                        8.01e-04    0.000    0.000 8.01e-04   0.0
+  u_dmem (dmem)                        2.05e-03    0.000    0.000 2.05e-03   0.0
+1

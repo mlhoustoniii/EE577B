@@ -1,0 +1,17 @@
+****************************************
+Report : clock
+Design : cardinal_node
+Version: Y-2026.03
+Date   : Fri Apr 17 13:38:01 2026
+****************************************
+
+Attributes:
+    p - Propagated clock
+    G - Generated  clock
+    I - Inactive   clock
+
+Clock             Period          Waveform            Attrs     Sources
+-----------------------------------------------------------------------
+clk                 4.00          {0 2}                         {clk}
+
+1
