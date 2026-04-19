@@ -1,0 +1,377 @@
+`timescale 1ns/1ps
+
+module gold_router #(
+    parameter ROUTER_X = 0,
+    parameter ROUTER_Y = 0
+)(
+    input  wire        clk,
+    input  wire        reset,
+    output wire        polarity,      // Exposed so gold_mesh can monitor it
+
+    // ---------------------------------------------------------------
+    // North Port
+    // ---------------------------------------------------------------
+    input  wire        nsi,           // North send-in
+    output wire        nri,           // North ready-in
+    input  wire [63:0] ndi,           // North data-in
+    output wire        nso,           // North send-out
+    input  wire        nro,           // North ready-out
+    output wire [63:0] ndo,           // North data-out
+
+    // ---------------------------------------------------------------
+    // South Port
+    // ---------------------------------------------------------------
+    input  wire        ssi,
+    output wire        sri,
+    input  wire [63:0] sdi,
+    output wire        sso,
+    input  wire        sro,
+    output wire [63:0] sdo,
+
+    // ---------------------------------------------------------------
+    // East Port
+    // ---------------------------------------------------------------
+    input  wire        esi,
+    output wire        eri,
+    input  wire [63:0] edi,
+    output wire        eso,
+    input  wire        ero,
+    output wire [63:0] edo,
+
+    // ---------------------------------------------------------------
+    // West Port
+    // ---------------------------------------------------------------
+    input  wire        wsi,
+    output wire        wri,
+    input  wire [63:0] wdi,
+    output wire        wso,
+    input  wire        wro,
+    output wire [63:0] wdo,
+
+    // ---------------------------------------------------------------
+    // PE Port (local processing element)
+    // ---------------------------------------------------------------
+    input  wire        pesi,
+    output wire        peri,
+    input  wire [63:0] pedi,
+    output wire        peso,
+    input  wire        pero,
+    output wire [63:0] pedo
+);
+
+    // ---------------------------------------------------------------
+    // Polarity generation
+    // Resets to 0, toggles every cycle after reset released
+    // Per spec: "changes to 1 at first rising clk edge after reset"
+    // ---------------------------------------------------------------
+    reg polarity_reg;
+    always @(posedge clk) begin
+        if (reset)
+            polarity_reg <= 1'b0;
+        else
+            polarity_reg <= ~polarity_reg;
+    end
+    assign polarity = polarity_reg;
+
+    // ---------------------------------------------------------------
+    // Internal wires: data outputs from each input_ctrl
+    // ic0=North ic1=South ic2=East ic3=West ic4=PE
+    // ---------------------------------------------------------------
+    wire [63:0] ic0_do_even, ic0_do_odd;
+    wire [63:0] ic1_do_even, ic1_do_odd;
+    wire [63:0] ic2_do_even, ic2_do_odd;
+    wire [63:0] ic3_do_even, ic3_do_odd;
+    wire [63:0] ic4_do_even, ic4_do_odd;
+
+    // ---------------------------------------------------------------
+    // Internal wires: 5-bit request buses from each input_ctrl
+    // Bit encoding: [0]=North [1]=South [2]=East [3]=West [4]=PE
+    // ---------------------------------------------------------------
+    wire [4:0] ic0_req_even, ic0_req_odd;
+    wire [4:0] ic1_req_even, ic1_req_odd;
+    wire [4:0] ic2_req_even, ic2_req_odd;
+    wire [4:0] ic3_req_even, ic3_req_odd;
+    wire [4:0] ic4_req_even, ic4_req_odd;
+
+    // ---------------------------------------------------------------
+    // Internal wires: 4-bit grant buses from each output_ctrl
+    // oc_north_grant[0] = grants South input (ic1)
+    // oc_north_grant[1] = grants East  input (ic2)
+    // oc_north_grant[2] = grants West  input (ic3)
+    // oc_north_grant[3] = grants PE    input (ic4)
+    // ---------------------------------------------------------------
+    wire [3:0] oc_north_grant_even, oc_north_grant_odd;
+    wire [3:0] oc_south_grant_even, oc_south_grant_odd;
+    wire [3:0] oc_east_grant_even,  oc_east_grant_odd;
+    wire [3:0] oc_west_grant_even,  oc_west_grant_odd;
+    wire [3:0] oc_pe_grant_even,    oc_pe_grant_odd;
+
+    // ---------------------------------------------------------------
+    // Grant routing back to each input_ctrl (OR of all possible grants)
+    // Each input_ctrl receives a single grant_even and grant_odd bit
+    //
+    // ic0 (North input) → can go to: South, East, West, PE outputs
+    //   oc_south slot[0], oc_east slot[0], oc_west slot[0], oc_pe slot[0]
+    //
+    // ic1 (South input) → can go to: North, East, West, PE outputs
+    //   oc_north slot[0], oc_east slot[1], oc_west slot[1], oc_pe slot[1]
+    //
+    // ic2 (East input) → can go to: North, South, West, PE outputs
+    //   oc_north slot[1], oc_south slot[1], oc_west slot[2], oc_pe slot[2]
+    //
+    // ic3 (West input) → can go to: North, South, East, PE outputs
+    //   oc_north slot[2], oc_south slot[2], oc_east slot[2], oc_pe slot[3]
+    //
+    // ic4 (PE input) → can go to: North, South, East, West outputs
+    //   oc_north slot[3], oc_south slot[3], oc_east slot[3], oc_west slot[3]
+    // ---------------------------------------------------------------
+
+    // ic0 grant_even and grant_odd
+    wire ic0_grant_even = oc_south_grant_even[0] | oc_east_grant_even[0]
+                        | oc_west_grant_even[0]  | oc_pe_grant_even[0];
+    wire ic0_grant_odd  = oc_south_grant_odd[0]  | oc_east_grant_odd[0]
+                        | oc_west_grant_odd[0]   | oc_pe_grant_odd[0];
+
+    // ic1 grant_even and grant_odd
+    wire ic1_grant_even = oc_north_grant_even[0] | oc_east_grant_even[1]
+                        | oc_west_grant_even[1]  | oc_pe_grant_even[1];
+    wire ic1_grant_odd  = oc_north_grant_odd[0]  | oc_east_grant_odd[1]
+                        | oc_west_grant_odd[1]   | oc_pe_grant_odd[1];
+
+    // ic2 grant_even and grant_odd
+    wire ic2_grant_even = oc_north_grant_even[1] | oc_south_grant_even[1]
+                        | oc_west_grant_even[2]  | oc_pe_grant_even[2];
+    wire ic2_grant_odd  = oc_north_grant_odd[1]  | oc_south_grant_odd[1]
+                        | oc_west_grant_odd[2]   | oc_pe_grant_odd[2];
+
+    // ic3 grant_even and grant_odd
+    wire ic3_grant_even = oc_north_grant_even[2] | oc_south_grant_even[2]
+                        | oc_east_grant_even[2]  | oc_pe_grant_even[3];
+    wire ic3_grant_odd  = oc_north_grant_odd[2]  | oc_south_grant_odd[2]
+                        | oc_east_grant_odd[2]   | oc_pe_grant_odd[3];
+
+    // ic4 grant_even and grant_odd
+    wire ic4_grant_even = oc_north_grant_even[3] | oc_south_grant_even[3]
+                        | oc_east_grant_even[3]  | oc_west_grant_even[3];
+    wire ic4_grant_odd  = oc_north_grant_odd[3]  | oc_south_grant_odd[3]
+                        | oc_east_grant_odd[3]   | oc_west_grant_odd[3];
+
+    // ---------------------------------------------------------------
+    // Input Controller Instantiations
+    // ---------------------------------------------------------------
+
+    // ic0: North input
+    input_ctrl #(.ROUTER_X(ROUTER_X), .ROUTER_Y(ROUTER_Y)) ic_north (
+        .clk         (clk),
+        .reset       (reset),
+        .polarity    (polarity_reg),
+        .si          (nsi),
+        .ri          (nri),
+        .di          (ndi),
+        .request_even(ic0_req_even),
+        .request_odd (ic0_req_odd),
+        .grant_even  (ic0_grant_even),
+        .grant_odd   (ic0_grant_odd),
+        .do_even     (ic0_do_even),
+        .do_odd      (ic0_do_odd)
+    );
+
+    // ic1: South input
+    input_ctrl #(.ROUTER_X(ROUTER_X), .ROUTER_Y(ROUTER_Y)) ic_south (
+        .clk         (clk),
+        .reset       (reset),
+        .polarity    (polarity_reg),
+        .si          (ssi),
+        .ri          (sri),
+        .di          (sdi),
+        .request_even(ic1_req_even),
+        .request_odd (ic1_req_odd),
+        .grant_even  (ic1_grant_even),
+        .grant_odd   (ic1_grant_odd),
+        .do_even     (ic1_do_even),
+        .do_odd      (ic1_do_odd)
+    );
+
+    // ic2: East input
+    input_ctrl #(.ROUTER_X(ROUTER_X), .ROUTER_Y(ROUTER_Y)) ic_east (
+        .clk         (clk),
+        .reset       (reset),
+        .polarity    (polarity_reg),
+        .si          (esi),
+        .ri          (eri),
+        .di          (edi),
+        .request_even(ic2_req_even),
+        .request_odd (ic2_req_odd),
+        .grant_even  (ic2_grant_even),
+        .grant_odd   (ic2_grant_odd),
+        .do_even     (ic2_do_even),
+        .do_odd      (ic2_do_odd)
+    );
+
+    // ic3: West input
+    input_ctrl #(.ROUTER_X(ROUTER_X), .ROUTER_Y(ROUTER_Y)) ic_west (
+        .clk         (clk),
+        .reset       (reset),
+        .polarity    (polarity_reg),
+        .si          (wsi),
+        .ri          (wri),
+        .di          (wdi),
+        .request_even(ic3_req_even),
+        .request_odd (ic3_req_odd),
+        .grant_even  (ic3_grant_even),
+        .grant_odd   (ic3_grant_odd),
+        .do_even     (ic3_do_even),
+        .do_odd      (ic3_do_odd)
+    );
+
+    // ic4: PE input
+    input_ctrl #(.ROUTER_X(ROUTER_X), .ROUTER_Y(ROUTER_Y)) ic_pe (
+        .clk         (clk),
+        .reset       (reset),
+        .polarity    (polarity_reg),
+        .si          (pesi),
+        .ri          (peri),
+        .di          (pedi),
+        .request_even(ic4_req_even),
+        .request_odd (ic4_req_odd),
+        .grant_even  (ic4_grant_even),
+        .grant_odd   (ic4_grant_odd),
+        .do_even     (ic4_do_even),
+        .do_odd      (ic4_do_odd)
+    );
+
+    // ---------------------------------------------------------------
+    // Output Controller Instantiations
+    //
+    // For each output_ctrl, define:
+    //   slot[0], slot[1], slot[2], slot[3] = which input_ctrls connect
+    //   request bit = the bit in that input_ctrl's request vector
+    //                 corresponding to THIS output direction
+    // ---------------------------------------------------------------
+
+    // oc_north: arbitrates S(ic1), E(ic2), W(ic3), PE(ic4)
+    // All requesting bit [0] = North direction
+    output_ctrl oc_north (
+        .clk          (clk),
+        .reset        (reset),
+        .polarity     (polarity_reg),
+        .request_even ({ic4_req_even[0], ic3_req_even[0],
+                        ic2_req_even[0], ic1_req_even[0]}),
+        .request_odd  ({ic4_req_odd[0],  ic3_req_odd[0],
+                        ic2_req_odd[0],  ic1_req_odd[0]}),
+        .di_even_0    (ic1_do_even),
+        .di_even_1    (ic2_do_even),
+        .di_even_2    (ic3_do_even),
+        .di_even_3    (ic4_do_even),
+        .di_odd_0     (ic1_do_odd),
+        .di_odd_1     (ic2_do_odd),
+        .di_odd_2     (ic3_do_odd),
+        .di_odd_3     (ic4_do_odd),
+        .grant_even   (oc_north_grant_even),
+        .grant_odd    (oc_north_grant_odd),
+        .so           (nso),
+        .ro           (nro),
+        .do_ext       (ndo)
+    );
+
+    // oc_south: arbitrates N(ic0), E(ic2), W(ic3), PE(ic4)
+    // All requesting bit [1] = South direction
+    output_ctrl oc_south (
+        .clk          (clk),
+        .reset        (reset),
+        .polarity     (polarity_reg),
+        .request_even ({ic4_req_even[1], ic3_req_even[1],
+                        ic2_req_even[1], ic0_req_even[1]}),
+        .request_odd  ({ic4_req_odd[1],  ic3_req_odd[1],
+                        ic2_req_odd[1],  ic0_req_odd[1]}),
+        .di_even_0    (ic0_do_even),
+        .di_even_1    (ic2_do_even),
+        .di_even_2    (ic3_do_even),
+        .di_even_3    (ic4_do_even),
+        .di_odd_0     (ic0_do_odd),
+        .di_odd_1     (ic2_do_odd),
+        .di_odd_2     (ic3_do_odd),
+        .di_odd_3     (ic4_do_odd),
+        .grant_even   (oc_south_grant_even),
+        .grant_odd    (oc_south_grant_odd),
+        .so           (sso),
+        .ro           (sro),
+        .do_ext       (sdo)
+    );
+
+    // oc_east: arbitrates N(ic0), S(ic1), W(ic3), PE(ic4)
+    // All requesting bit [2] = East direction
+    output_ctrl oc_east (
+        .clk          (clk),
+        .reset        (reset),
+        .polarity     (polarity_reg),
+        .request_even ({ic4_req_even[2], ic3_req_even[2],
+                        ic1_req_even[2], ic0_req_even[2]}),
+        .request_odd  ({ic4_req_odd[2],  ic3_req_odd[2],
+                        ic1_req_odd[2],  ic0_req_odd[2]}),
+        .di_even_0    (ic0_do_even),
+        .di_even_1    (ic1_do_even),
+        .di_even_2    (ic3_do_even),
+        .di_even_3    (ic4_do_even),
+        .di_odd_0     (ic0_do_odd),
+        .di_odd_1     (ic1_do_odd),
+        .di_odd_2     (ic3_do_odd),
+        .di_odd_3     (ic4_do_odd),
+        .grant_even   (oc_east_grant_even),
+        .grant_odd    (oc_east_grant_odd),
+        .so           (eso),
+        .ro           (ero),
+        .do_ext       (edo)
+    );
+
+    // oc_west: arbitrates N(ic0), S(ic1), E(ic2), PE(ic4)
+    // All requesting bit [3] = West direction
+    output_ctrl oc_west (
+        .clk          (clk),
+        .reset        (reset),
+        .polarity     (polarity_reg),
+        .request_even ({ic4_req_even[3], ic2_req_even[3],
+                        ic1_req_even[3], ic0_req_even[3]}),
+        .request_odd  ({ic4_req_odd[3],  ic2_req_odd[3],
+                        ic1_req_odd[3],  ic0_req_odd[3]}),
+        .di_even_0    (ic0_do_even),
+        .di_even_1    (ic1_do_even),
+        .di_even_2    (ic2_do_even),
+        .di_even_3    (ic4_do_even),
+        .di_odd_0     (ic0_do_odd),
+        .di_odd_1     (ic1_do_odd),
+        .di_odd_2     (ic2_do_odd),
+        .di_odd_3     (ic4_do_odd),
+        .grant_even   (oc_west_grant_even),
+        .grant_odd    (oc_west_grant_odd),
+        .so           (wso),
+        .ro           (wro),
+        .do_ext       (wdo)
+    );
+
+    // oc_pe: arbitrates N(ic0), S(ic1), E(ic2), W(ic3)
+    // All requesting bit [4] = PE direction
+    output_ctrl oc_pe (
+        .clk          (clk),
+        .reset        (reset),
+        .polarity     (polarity_reg),
+        .request_even ({ic3_req_even[4], ic2_req_even[4],
+                        ic1_req_even[4], ic0_req_even[4]}),
+        .request_odd  ({ic3_req_odd[4],  ic2_req_odd[4],
+                        ic1_req_odd[4],  ic0_req_odd[4]}),
+        .di_even_0    (ic0_do_even),
+        .di_even_1    (ic1_do_even),
+        .di_even_2    (ic2_do_even),
+        .di_even_3    (ic3_do_even),
+        .di_odd_0     (ic0_do_odd),
+        .di_odd_1     (ic1_do_odd),
+        .di_odd_2     (ic2_do_odd),
+        .di_odd_3     (ic3_do_odd),
+        .grant_even   (oc_pe_grant_even),
+        .grant_odd    (oc_pe_grant_odd),
+        .so           (peso),
+        .ro           (pero),
+        .do_ext       (pedo)
+    );
+
+endmodule
