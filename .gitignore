@@ -1,0 +1,38 @@
+# Simulation & Synthesis Logs
+*.log
+*.history
+*.out
+
+# Cadence / Synopsys Generated Files
+*.res
+*.mr
+*.pvl
+*.syn
+*.vcd
+
+INCA_libs/
+work/
+ncsim.shm/
+
+# Large / generated binaries
+*.enc
+*.enc.dat
+*.v.bin
+*.route*
+*.place*
+*.spef
+
+# Innovus temp + logs
+innovus_temp/
+phase4/PNR/logs/
+phase4/PNR/innovus.*
+
+# Heavy layout outputs
+*.gds
+phase4/PNR/output/
+
+# STA logs
+phase4/STA/logs/
+
+# Zipped archives
+*.zip
