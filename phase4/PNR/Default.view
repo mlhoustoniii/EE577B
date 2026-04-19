@@ -1,0 +1,6 @@
+# Version:1.0 MMMC View Definition File
+# Do Not Remove Above Line
+create_library_set -name gscl45nm_lib -timing {gscl45nm.tlf}
+create_constraint_mode -name cardinal_node.sdc -sdc_files {sdc/cardinal_node.sdc}
+create_delay_corner -name delay_corner_typ -library_set {gscl45nm_lib}
+create_analysis_view -name view1 -constraint_mode {cardinal_node.sdc} -delay_corner {delay_corner_typ}
